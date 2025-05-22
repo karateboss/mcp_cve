@@ -36,5 +36,9 @@ def search_cve(vendor: str, product: str) -> dict:
         ]
     }
 
-if __name__ == "__main__":
+# Run the MCP server
+def main():
     mcp.run()
+
+if __name__ == "__main__":
+    main()
