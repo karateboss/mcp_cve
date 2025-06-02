@@ -9,10 +9,8 @@ logging.basicConfig(level=logging.INFO)
 
 mcp = FastMCP(name="cve search tool")
 
-# Corrected NVD API 2.0 URL with trailing slash
 NVD_API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0/"
-NVD_API_KEY = os.getenv("NVD_API_KEY")  # Changed from API_KEY to NVD_API_KEY
-
+NVD_API_KEY = os.getenv("NVD_API_KEY")
 def get_headers():
     headers = {"User-Agent": "CVE-Search-MCP/1.0"}
     if NVD_API_KEY:
@@ -28,11 +26,13 @@ def search_cve(vendor: str, product: str) -> dict:
     if not vendor.strip() or not product.strip():
         return {"error": "Both 'vendor' and 'product' must be non-empty."}
 
-    # Use more specific CPE matching for better results
+    # Use more specific CPE matching for better results, sorted by publication date descending
     params = {
         "cpeName": f"cpe:2.3:a:{vendor}:{product}:*",
         "resultsPerPage": 5,
-        "startIndex": 0
+        "startIndex": 0,
+        "sortBy": "published",
+        "sortOrder": "desc"
     }
     
     try:
@@ -67,11 +67,13 @@ def search_cve(vendor: str, product: str) -> dict:
 
 
 def search_cve_fallback(vendor: str, product: str) -> dict:
-    """Fallback search using keyword search instead of CPE"""
+    """Fallback search using keyword search instead of CPE, sorted by latest first"""
     params = {
         "keywordSearch": f"{vendor} {product}",
         "resultsPerPage": 5,
-        "startIndex": 0
+        "startIndex": 0,
+        "sortBy": "published",
+        "sortOrder": "desc"
     }
     
     try:
@@ -142,7 +144,9 @@ def filter_cve_by_severity(vendor: str, product: str, severity: str) -> dict:
         "keywordSearch": f"{vendor} {product}",
         "cvssV3Severity": severity.upper(),
         "resultsPerPage": 5,
-        "startIndex": 0
+        "startIndex": 0,
+        "sortBy": "published",
+        "sortOrder": "desc"
     }
 
     try:
@@ -176,7 +180,9 @@ def export_cve_report_csv(vendor: str, product: str) -> dict:
     params = {
         "keywordSearch": f"{vendor} {product}",
         "resultsPerPage": 20,
-        "startIndex": 0
+        "startIndex": 0,
+        "sortBy": "published",
+        "sortOrder": "desc"
     }
     
     try:
