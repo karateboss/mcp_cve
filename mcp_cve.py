@@ -11,7 +11,7 @@ mcp = FastMCP(name="cve search tool")
 
 # Updated NVD API 2.0 URLs
 NVD_API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
-NVD_API_KEY = os.getenv("NVD_API_KEY")
+NVD_API_KEY = os.getenv("API_KEY")
 
 def get_headers():
     headers = {"User-Agent": "CVE-Search-MCP/1.0"}
