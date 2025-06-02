@@ -30,7 +30,13 @@ def search_cve(vendor: str, product: str) -> dict:
         return {"error": "Both 'vendor' and 'product' must be non-empty."}
 
     keyword = f"{vendor} {product}"
-    params = {"keywordSearch": keyword, "resultsPerPage": 5}
+    params = {
+    "keywordSearch": keyword,
+    "resultsPerPage": 5,
+    "sortBy": "pubDate",
+    "sortOrder": "desc"
+    }
+    
     response = requests.get(NVD_API_URL, params=params, headers=get_headers())
 
     if response.status_code == 429:
@@ -71,10 +77,13 @@ def get_cve_details(cve_id: str) -> dict:
 def filter_cve_by_severity(vendor: str, product: str, severity: str) -> dict:
     keyword = f"{vendor} {product}"
     params = {
-        "keywordSearch": keyword,
-        "cvssV3Severity": severity.upper(),
-        "resultsPerPage": 5
+    "keywordSearch": keyword,
+    "cvssV3Severity": severity.upper(),
+    "resultsPerPage": 5,
+    "sortBy": "pubDate",
+    "sortOrder": "desc"
     }
+
     response = requests.get(NVD_API_URL, params=params, headers=get_headers())
     if response.status_code != 200:
         return {"error": f"Failed to fetch CVEs: {response.status_code}"}
@@ -96,7 +105,13 @@ def filter_cve_by_severity(vendor: str, product: str, severity: str) -> dict:
 )
 def export_cve_report_csv(vendor: str, product: str) -> dict:
     keyword = f"{vendor} {product}"
-    params = {"keywordSearch": keyword, "resultsPerPage": 10}
+
+    params = {
+    "keywordSearch": keyword,
+    "resultsPerPage": 10,
+    "sortBy": "pubDate",
+    "sortOrder": "desc"
+    }
     response = requests.get(NVD_API_URL, params=params, headers=get_headers())
 
     if response.status_code != 200:
